@@ -7,8 +7,8 @@ COPY . /app
 WORKDIR /app
 
 # RUN https://medium.com/@marcin.niemira/optimise-docker-build-for-go-c03d6eb8b4b
-RUN --mount=type=cache,id=gomod,target=/go/pkg/mod \
-    --mount=type=cache,id=gobuild,target=/root/.cache/go-build \
+RUN --mount=type=cache,id=s/358414d7-9591-42bc-b50f-92a8568b0408-/go/pkg/mod,target=/go/pkg/mod \
+    --mount=type=cache,id=s/358414d7-9591-42bc-b50f-92a8568b0408-/root/.cache/go-build,target=/root/.cache/go-build \
     CGO_ENABLED=0 GOOS=linux \
     go build -o seonaut cmd/server/main.go
 
@@ -17,7 +17,7 @@ FROM node:18-alpine3.18 AS front
 WORKDIR /home/node
 COPY ./web ./app/web
 
-RUN --mount=type=cache,id=npm,target=/root/.npm \
+RUN --mount=type=cache,id=s/358414d7-9591-42bc-b50f-92a8568b0408-/root/.npm,target=/root/.npm \
 	npm install --save-exact esbuild && \
 	./node_modules/esbuild/bin/esbuild ./app/web/css/style.css \
 	--bundle \
