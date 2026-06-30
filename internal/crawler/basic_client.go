@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"net/http/httptrace"
 	"net/url"
+	"os"
 	"time"
 
 	"github.com/mileusna/useragent"
@@ -93,6 +94,13 @@ func (c *BasicClient) do(req *http.Request) (*ClientResponse, error) {
 	}
 
 	req.Header.Set("User-Agent", c.Options.UserAgent)
+	// Web Bot Auth signature for Shopify Crawler Access.
+	// Values come from Shopify admin: Online Store > Preferences > Crawler access.
+	if sigInput := os.Getenv("SEONAUT_SIGNATURE_INPUT"); sigInput != "" {
+		req.Header.Set("Signature-Input", sigInput)
+		req.Header.Set("Signature", os.Getenv("SEONAUT_SIGNATURE"))
+		req.Header.Set("Signature-Agent", os.Getenv("SEONAUT_SIGNATURE_AGENT"))
+	}
 	req = req.WithContext(httptrace.WithClientTrace(req.Context(), trace))
 
 	resp, err := c.client.Do(req)
